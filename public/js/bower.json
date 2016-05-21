@@ -1,0 +1,24 @@
+{
+  "name": "the-maps",
+  "homepage": "https://github.com/GobiernoFacil/the-map-pack-quack",
+  "authors": [
+    "el coruco <el.coruco@gmail.com>"
+  ],
+  "description": "the good damn maps",
+  "main": "main.js",
+  "keywords": [
+    "mapas"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "^3.5.17"
+  }
+}
