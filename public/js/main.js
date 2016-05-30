@@ -19,7 +19,7 @@ var MAP = {
   lat     : 22.442167,
   lng     : -100.110350,
   zoom    : 5,
-  token   : "pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw",
+  token   : "",
   maxZoom : 18,
   id      : 'mapbox.light',
   baseURL : 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=',
