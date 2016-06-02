@@ -7,6 +7,19 @@
   <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
+  <!-- los controles temporales -->
+  <form>
+    <select>
+      <option value="indice_2008">indice 2008</option>
+      <option value="indice_2009">indice 2009</option>
+      <option value="indice_2010">indice 2010</option>
+      <option value="indice_2011">indice 2011</option>
+      <option value="indice_2012">indice 2012</option>
+      <option value="indice_2013">indice 2013</option>
+      <option value="indice_2014" selected>indice 2014</option>
+    </select>
+  </form>
+
   <!-- el mapa! -->
   <div id="map"></div>
 
