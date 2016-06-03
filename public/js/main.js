@@ -11,6 +11,9 @@
  */
 
 var appINAI = {
+  // a dictionary for the valiable values. Is used to mix all the years of a given index,
+  // tom make a single calculation for the data range (e.g. get the values from 2008 to 2014 to
+  // define the color range)
   dataMap : {
     pob_conapo : [{key : "pob_conapo_2016", year : 2016}],
     presupuesto : [{
