@@ -11,6 +11,92 @@
  */
 
 var appINAI = {
+  dataMap : {
+    pob_conapo : [{key : "pob_conapo_2016", year : 2016}],
+    presupuesto : [{
+      key  : "presupuesto_2014",
+      year : 2014
+    },
+    {
+      key  : "presupuesto_2015",
+      year : 2015
+    },
+    {
+      key  : "presupuesto_2016",
+      year : 2016
+    }],
+    percapita : [{key : "percapita_2016", year : 2016}],
+    solicitudes : [{
+      key  : "solicitudes_2008",
+      year : 2008
+    },
+    {
+      key  : "solicitudes_2009",
+      year : 2009
+    },
+    {
+      key  : "solicitudes_2010",
+      year : 2010
+    },
+    {
+      key  : "solicitudes_2011",
+      year : 2011
+    },
+    {
+      key  : "solicitudes_2012",
+      year : 2012
+    },
+    {
+      key  : "solicitudes_2013",
+      year : 2013
+    },
+    {
+      key  : "solicitudes_2014",
+      year : 2014
+    }],
+    indice : [{
+      key  : "indice_2008",
+      year : 2008
+    },
+    {
+      key  : "indice_2009",
+      year : 2009
+    },
+    {
+      key  : "indice_2010",
+      year : 2010
+    },
+    {
+      key  : "indice_2011",
+      year : 2011
+    },
+    {
+      key  : "indice_2012",
+      year : 2012
+    },
+    {
+      key  : "indice_2013",
+      year : 2013
+    },
+    {
+      key  : "indice_2014",
+      year : 2014
+    }],
+    "resolucion_sobreseer":[{key          : "resolucion_sobreseer", year : null}],
+   "resolucion_desechar":[{key            : "resolucion_desechar", year : null}],
+   "resolucion_revocar":[{key             : "resolucion_revocar", year : null}],
+   "resolucion_confirmar":[{key           : "resolucion_confirmar", year : null}],
+   "resolucion_modificar":[{key           : "resolucion_modificar", year : null}],
+   "resolucion_tramite":[{key             : "resolucion_tramite", year : null}],
+   "resolucion_no_interpuesto":[{key      : "resolucion_no_interpuesto", year : null}],
+   "resolucion_orden_entregar":[{key      : "resolucion_orden_entregar", year : null}],
+   "resolucion_revocar_parcial":[{key     : "resolucion_revocar_parcial", year : null}],
+   "resolucion_revocados":[{key           : "resolucion_revocados", year : null}],
+   "resolucion_improcedente":[{key        : "resolucion_improcedente", year : null}],
+   "resolucion_desechado":[{key           : "resolucion_desechado", year : null}],
+   "resolucion_confirmar_respuesta":[{key : "resolucion_confirmar_respuesta", year : null}]
+  },
+
   // las opciones de color disponibles
   BREW_COLORS :["OrRd", "PuBu", "BuPu", "Oranges", 
     "BuGn", "YlOrBr", "YlGn", "Reds", 
@@ -117,19 +203,28 @@ var appINAI = {
   //
   filterData : function(e){
     var select = e.currentTarget || e,
-        index  = select.value,
-        data   = this.states_array.map(function(state){
-          return +state.feature.properties.data[index] || 0;
-        });
+        _index = select.value,
+        index  = this.dataMap[_index],
+        keys   = index.map(function(ind){
+          return ind.key;
+        }),
+        data     = [],
+        selected = keys[0];
+
+        keys.forEach(function(k){
+          data = data.concat(this.states_array.map(function(state){
+            return +state.feature.properties.data[k] || 0;
+          }));
+        }, this);
+
     this.brewColor(data);
+
     this.states_array.forEach(function(state){
       state.layer.setStyle({
-        fillColor : this.brew.getColorInRange(+state.feature.properties.data[index] || 0),
-        fill : this.brew.getColorInRange(+state.feature.properties.data[index] || 0)
+        fillColor : this.brew.getColorInRange(+state.feature.properties.data[selected] || 0),
+        fill : this.brew.getColorInRange(+state.feature.properties.data[selected] || 0)
       });
     }, this);
-
-    return data;
   },
 
   // [ COMENTAR DESPÚES ]
