@@ -10,14 +10,17 @@
   <!-- los controles temporales -->
   <form>
     <select>
+      <!--
       <option value="indice">indice</option>
       <option value="presupuesto">presupuesto</option>
       <option value="pob_conapo">población conapo</option>
+      -->
     </select>
   </form>
 
   <!-- el mapa! -->
   <div id="map"></div>
+  <ul id="year-selector"></ul>
 
 <script src="js/bower_components/d3/d3.js"></script>
 <script src="js/bower_components/leaflet/dist/leaflet.js"></script>

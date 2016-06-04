@@ -15,10 +15,11 @@ var appINAI = {
   // tom make a single calculation for the data range (e.g. get the values from 2008 to 2014 to
   // define the color range)
   dataMap : {
-    pob_conapo : [{key : "pob_conapo_2016", year : 2016}],
+    pob_conapo : [{key : "pob_conapo_2016", year : 2016, title : "población conapo"}],
     presupuesto : [{
       key  : "presupuesto_2014",
-      year : 2014
+      year : 2014,
+      title : "presupuesto"
     },
     {
       key  : "presupuesto_2015",
@@ -28,10 +29,11 @@ var appINAI = {
       key  : "presupuesto_2016",
       year : 2016
     }],
-    percapita : [{key : "percapita_2016", year : 2016}],
+    percapita : [{key : "percapita_2016", year : 2016, title : "percápita"}],
     solicitudes : [{
       key  : "solicitudes_2008",
-      year : 2008
+      year : 2008,
+      title : "solicitudes"
     },
     {
       key  : "solicitudes_2009",
@@ -59,7 +61,8 @@ var appINAI = {
     }],
     indice : [{
       key  : "indice_2008",
-      year : 2008
+      year : 2008,
+      title : "índice"
     },
     {
       key  : "indice_2009",
@@ -85,19 +88,19 @@ var appINAI = {
       key  : "indice_2014",
       year : 2014
     }],
-    "resolucion_sobreseer":[{key          : "resolucion_sobreseer", year : null}],
-   "resolucion_desechar":[{key            : "resolucion_desechar", year : null}],
-   "resolucion_revocar":[{key             : "resolucion_revocar", year : null}],
-   "resolucion_confirmar":[{key           : "resolucion_confirmar", year : null}],
-   "resolucion_modificar":[{key           : "resolucion_modificar", year : null}],
-   "resolucion_tramite":[{key             : "resolucion_tramite", year : null}],
-   "resolucion_no_interpuesto":[{key      : "resolucion_no_interpuesto", year : null}],
-   "resolucion_orden_entregar":[{key      : "resolucion_orden_entregar", year : null}],
-   "resolucion_revocar_parcial":[{key     : "resolucion_revocar_parcial", year : null}],
-   "resolucion_revocados":[{key           : "resolucion_revocados", year : null}],
-   "resolucion_improcedente":[{key        : "resolucion_improcedente", year : null}],
-   "resolucion_desechado":[{key           : "resolucion_desechado", year : null}],
-   "resolucion_confirmar_respuesta":[{key : "resolucion_confirmar_respuesta", year : null}]
+    "resolucion_sobreseer":[{key          : "resolucion_sobreseer", year : 2014, title : "resolución sobreseer"}],
+   "resolucion_desechar":[{key            : "resolucion_desechar", year : 2014, title : "resolución desechar"}],
+   "resolucion_revocar":[{key             : "resolucion_revocar", year : 2014, title : "resolución revocar"}],
+   "resolucion_confirmar":[{key           : "resolucion_confirmar", year : 2014, title : "resolución confirmar"}],
+   "resolucion_modificar":[{key           : "resolucion_modificar", year : 2014, title : "resolución modificar"}],
+   "resolucion_tramite":[{key             : "resolucion_tramite", year : 2014, title : "resolución trámite"}],
+   "resolucion_no_interpuesto":[{key      : "resolucion_no_interpuesto", year : 2014, title : "resolución no interpuesto"}],
+   "resolucion_orden_entregar":[{key      : "resolucion_orden_entregar", year : 2014, title : "resolución orden entregar"}],
+   "resolucion_revocar_parcial":[{key     : "resolucion_revocar_parcial", year : 2014, title : "resolución revocar parcial"}],
+   "resolucion_revocados":[{key           : "resolucion_revocados", year : 2014, title : "resolución revocados"}],
+   "resolucion_improcedente":[{key        : "resolucion_improcedente", year : 2014, title : "resolución improcedente"}],
+   "resolucion_desechado":[{key           : "resolucion_desechado", year : 2014, title : "resolución desechado"}],
+   "resolucion_confirmar_respuesta":[{key : "resolucion_confirmar_respuesta", year : 2014, title : "resolución confirmar respuesta"}]
   },
 
   // las opciones de color disponibles
@@ -130,8 +133,8 @@ var appINAI = {
   brew         : null, // el objeto de color
   // las opciones del objeto de color
   brewSettings : {
-    colorNum : 5, // el número de colores
-    colorKey : 10, // la clave de color (BREW_COLORS)
+    colorNum : 6, // el número de colores
+    colorKey : 12, // la clave de color (BREW_COLORS)
     classify : "jenks" // el método para hacer la separación de color. Sepa :P
   },
   states_array : [], // el array con objetos, datos y geometrías.
@@ -139,9 +142,11 @@ var appINAI = {
   //
   // [ La función de inicio ]
   //
-  initialize : function(estados, inai, select){
+  initialize : function(estados, inai, select, menu){
     // se obtiene una referencia al appINAI, para usarla dentro de las funciones de este método
     var that = this;
+    this._select = select;
+    this._menu = menu;
 
     // se crea el mapa de leaflet
     this.map = L.map(this.mapSettings.div).setView([
@@ -158,6 +163,7 @@ var appINAI = {
         // cuando se tiene la info del INAI, se configuran otras variables internas
         that.mapData(_json);
         // se pinta de colores el mapa
+        that.fillSelect();
         that.filterData(select);
       });
     });
@@ -189,6 +195,19 @@ var appINAI = {
     }).addTo(this.map);
   },
 
+  //
+  //
+  //
+  fillSelect : function(){
+    for(var prop in this.dataMap){
+      if( this.dataMap.hasOwnProperty( prop ) ) {
+        var opt = document.createElement("option");
+        opt.innerHTML = prop;
+        this._select.appendChild(opt);
+      } 
+    }
+  },
+
   // [ COMENTAR DESPÚES ]
   //
   //
@@ -211,6 +230,9 @@ var appINAI = {
         keys   = index.map(function(ind){
           return ind.key;
         }),
+        years   = index.map(function(ind){
+          return ind.year;
+        }),
         data     = [],
         selected = keys[0];
 
@@ -224,10 +246,35 @@ var appINAI = {
 
     this.states_array.forEach(function(state){
       state.layer.setStyle({
-        fillColor : this.brew.getColorInRange(+state.feature.properties.data[selected] || 0),
-        fill : this.brew.getColorInRange(+state.feature.properties.data[selected] || 0)
+        fillColor : this.brew.getColorInRange(+state.feature.properties.data[selected] || 0)
       });
     }, this);
+
+    this.setSelector(years);
+  },
+
+  //
+  //
+  //
+  setSelector : function(years){
+    var that = this;
+    this._menu.innerHTML = "";
+    
+    for(var i = 0; i < years.length; i++){
+      var li     = document.createElement("li"),
+          anchor = document.createElement("a"),
+          year   = document.createTextNode(years[i]);
+      anchor.appendChild(year);
+      anchor.href = "#";
+      anchor.className = "year";
+      li.appendChild(anchor);
+      this._menu.appendChild(li);
+    }
+
+    d3.selectAll("a.year")
+      .on("click", function(){
+        d3.event.preventDefault();
+      });
   },
 
   // [ COMENTAR DESPÚES ]
@@ -243,7 +290,7 @@ var appINAI = {
 };
 
 // INICIA EL MAPA
-appINAI.initialize("js/json/estados.json", "js/json/inai-data.json", document.querySelector("select"));
+appINAI.initialize("js/json/estados.json", "js/json/inai-data.json", document.querySelector("select"), document.getElementById("year-selector"));
 
 // ACTIVA EL SELECTOR DE VARIABLE
 var selector = document.querySelector("select");
