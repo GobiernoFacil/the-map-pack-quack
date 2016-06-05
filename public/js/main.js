@@ -17,14 +17,22 @@ var appINAI = {
       L.Util.setOptions(this, options);
     },
     onAdd : function(map){
-      var div = document.createElement("div"),
-          h3  = document.createElement("h3");
+      var div    = document.createElement("div"), // the info panel
+          h3     = document.createElement("h3"),  // the title
+          h4     = document.createElement("h4")   // the current value
+          h5     = document.createElement("h5");  // the description
+          colors = document.createElement("ul");  // the colors list
 
       h3.innerHTML = "hola!";
       div.appendChild(h3);
+      div.appendChild(h4);
+      div.appendChild(h5);
+      div.appendChild(colors);
       return div;
     }
   }),
+
+  format : d3.format(","),
   // a dictionary for the valiable values. Is used to mix all the years of a given index,
   // tom make a single calculation for the data range (e.g. get the values from 2008 to 2014 to
   // define the color range)
@@ -205,10 +213,39 @@ var appINAI = {
 
         layer.on({
           mouseover : function(){
-            console.log(that.panel._container);
-            console.log(layer);
-            console.log(feature);
-            console.log(that.index);
+            var stateName   = feature.properties.name,
+                title       = that.panel._container.querySelector("h3"),
+                value       = that.panel._container.querySelector("h4"),
+                description = that.panel._container.querySelector("h5"),
+                colorsList  = that.panel._container.querySelector("ul"),
+                current     = that.index.filter(function(d){
+                  return that.year == d.year;
+                })[0],
+                val     = feature.properties.data[current.key],
+                desc    = that.index[0].title,
+                breaks  = that.brew.getBreaks(),
+                colors  = that.brew.getColors(),
+                _colors = [];
+            
+            colorsList.innerHTML = "";
+            colors.forEach(function(col, ind){
+              var li     = document.createElement("li"),
+                  _color = document.createElement("span"),
+                  _label = document.createElement("span");
+
+              _color.className = "color-label";
+              _color.style.backgroundColor = col;
+              _label.className = "num-label";
+              _label.innerHTML = that.format(breaks[ind]) + " - " + that.format(breaks[ind+1]);
+              li.appendChild(_color);
+              li.appendChild(_label);
+              colorsList.appendChild(li);
+            });
+
+            title.innerHTML       = stateName;
+            value.innerHTML       = that.format(val);
+            description.innerHTML = desc;
+
             layer.setStyle({color : "red"});
           },
           mouseout  : function(){

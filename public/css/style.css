@@ -3,3 +3,10 @@
   height: 600px;
   margin 0 auto;
 }
+
+span.color-label{
+  display: inline-block;
+  height: 1em;
+  margin-right:1em;
+  width: 3em;
+}
