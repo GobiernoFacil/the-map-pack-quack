@@ -11,6 +11,20 @@
  */
 
 var appINAI = {
+  _colorPanel : L.Control.extend({
+    initialize : function(app, options){
+      this.app = app;
+      L.Util.setOptions(this, options);
+    },
+    onAdd : function(map){
+      var div = document.createElement("div"),
+          h3  = document.createElement("h3");
+
+      h3.innerHTML = "hola!";
+      div.appendChild(h3);
+      return div;
+    }
+  }),
   // a dictionary for the valiable values. Is used to mix all the years of a given index,
   // tom make a single calculation for the data range (e.g. get the values from 2008 to 2014 to
   // define the color range)
@@ -132,6 +146,7 @@ var appINAI = {
   states       : null, // un array con los estados
   brew         : null, // el objeto de color
   index        : null, // el indicador seleccionado
+  year         : null, // el año seleccionado
   // las opciones del objeto de color
   brewSettings : {
     colorNum : 6, // el número de colores
@@ -166,6 +181,10 @@ var appINAI = {
         // se pinta de colores el mapa
         that.fillSelect();
         that.filterData(select);
+
+        // genera el panel de información y lo pega al mapa
+        that.panel = new that._colorPanel(that, { position : 'topright' });
+        that.panel.addTo(that.map);
       });
     });
   },
@@ -186,10 +205,15 @@ var appINAI = {
 
         layer.on({
           mouseover : function(){
-            console.log(feature.properties);
+            console.log(that.panel._container);
+            console.log(layer);
+            console.log(feature);
+            console.log(that.index);
             layer.setStyle({color : "red"});
-          }
-          //mouseout  : this.resetHighlight.bind(this),
+          },
+          mouseout  : function(){
+
+          },
           //click     : this.zoomToFeature.bind(this)
         });
       },
@@ -259,14 +283,13 @@ var appINAI = {
         }),
         selected = current[0].key;
 
+    this.year = year;
 
     this.states_array.forEach(function(state){
-      console.log(this.brew.getColorInRange(+state.feature.properties.data[selected] || 0), selected);
       state.layer.setStyle({
         fillColor : this.brew.getColorInRange(+state.feature.properties.data[selected] || 0)
       });
     }, this);
-    console.log(current);
   },
 
   // [ COMENTAR DESPÚES ]
