@@ -131,6 +131,7 @@ var appINAI = {
   map          : null, // el mapa de leaflet
   states       : null, // un array con los estados
   brew         : null, // el objeto de color
+  index        : null, // el indicador seleccionado
   // las opciones del objeto de color
   brewSettings : {
     colorNum : 6, // el número de colores
@@ -195,7 +196,7 @@ var appINAI = {
     }).addTo(this.map);
   },
 
-  //
+  // [ COMENTAR DESPÚES ]
   //
   //
   fillSelect : function(){
@@ -236,6 +237,8 @@ var appINAI = {
         data     = [],
         selected = keys[0];
 
+        this.index = index;
+
         keys.forEach(function(k){
           data = data.concat(this.states_array.map(function(state){
             return +state.feature.properties.data[k] || 0;
@@ -243,20 +246,33 @@ var appINAI = {
         }, this);
 
     this.brewColor(data);
+    this.updateMap(this.index[0].year);
+    this.setYearSelector(years);
+  },
+
+  // [ COMENTAR DESPÚES ]
+  //
+  //
+  updateMap : function(year){
+    var current = this.index.filter(function(el){
+          return el.year == year;
+        }),
+        selected = current[0].key;
+
 
     this.states_array.forEach(function(state){
+      console.log(this.brew.getColorInRange(+state.feature.properties.data[selected] || 0), selected);
       state.layer.setStyle({
         fillColor : this.brew.getColorInRange(+state.feature.properties.data[selected] || 0)
       });
     }, this);
-
-    this.setSelector(years);
+    console.log(current);
   },
 
+  // [ COMENTAR DESPÚES ]
   //
   //
-  //
-  setSelector : function(years){
+  setYearSelector : function(years){
     var that = this;
     this._menu.innerHTML = "";
     
@@ -266,14 +282,16 @@ var appINAI = {
           year   = document.createTextNode(years[i]);
       anchor.appendChild(year);
       anchor.href = "#";
+      anchor.setAttribute("data-year", years[i]);
       anchor.className = "year";
       li.appendChild(anchor);
       this._menu.appendChild(li);
     }
-
     d3.selectAll("a.year")
       .on("click", function(){
         d3.event.preventDefault();
+        console.log(that.index);
+        that.updateMap(this.getAttribute("data-year"));
       });
   },
 
