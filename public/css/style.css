@@ -10,3 +10,7 @@ span.color-label{
   margin-right:1em;
   width: 3em;
 }
+
+.state-hover{
+  color: red;
+}

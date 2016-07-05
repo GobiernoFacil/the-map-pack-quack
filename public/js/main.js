@@ -147,7 +147,11 @@ var appINAI = {
     weight      : 1,
     opacity     : 0.6,
     fillOpacity : 1,         
-    color       : 'black',
+    color       : 'white',
+  },
+
+  stateHoverStyle : {
+    color : "black",
   },
   // se inician variables internas
   map          : null, // el mapa de leaflet
@@ -192,6 +196,7 @@ var appINAI = {
 
         // genera el panel de información y lo pega al mapa
         that.panel = new that._colorPanel(that, { position : 'topright' });
+        console.log(that.panel);
         that.panel.addTo(that.map);
       });
     });
@@ -215,46 +220,62 @@ var appINAI = {
           mouseover : function(){
             var stateName   = feature.properties.name,
                 title       = that.panel._container.querySelector("h3"),
-                value       = that.panel._container.querySelector("h4"),
-                description = that.panel._container.querySelector("h5"),
-                colorsList  = that.panel._container.querySelector("ul"),
                 current     = that.index.filter(function(d){
                   return that.year == d.year;
                 })[0],
-                val     = feature.properties.data[current.key],
-                desc    = that.index[0].title,
-                breaks  = that.brew.getBreaks(),
-                colors  = that.brew.getColors(),
-                _colors = [];
-            
-            colorsList.innerHTML = "";
-            colors.forEach(function(col, ind){
-              var li     = document.createElement("li"),
-                  _color = document.createElement("span"),
-                  _label = document.createElement("span");
+                val = feature.properties.data[current.key];
 
-              _color.className = "color-label";
-              _color.style.backgroundColor = col;
-              _label.className = "num-label";
-              _label.innerHTML = that.format(breaks[ind]) + " - " + that.format(breaks[ind+1]);
-              li.appendChild(_color);
-              li.appendChild(_label);
-              colorsList.appendChild(li);
-            });
-
-            title.innerHTML       = stateName;
-            value.innerHTML       = that.format(val);
-            description.innerHTML = desc;
-
-            layer.setStyle({color : "red"});
+            that.updateInfoPanel();
+            that.updateInfoPanelState(stateName, val);
+            layer.setStyle(that.stateHoverStyle);
           },
-          mouseout  : function(){
 
+          mouseout  : function(){
+            layer.setStyle(that.stateStyle);
           },
           //click     : this.zoomToFeature.bind(this)
         });
       },
     }).addTo(this.map);
+  },
+
+  // [ COMENTAR DESPÚES ]
+  //
+  //
+  updateInfoPanel : function(){
+    var that        = this,
+        breaks      = this.brew.getBreaks(),
+        colors      = this.brew.getColors(),
+        desc        = this.index[0].title,
+        colorsList  = this.panel._container.querySelector("ul"),
+        description = this.panel._container.querySelector("h5");
+    
+    colorsList.innerHTML = "";
+    colors.forEach(function(col, ind){
+      var li     = document.createElement("li"),
+          _color = document.createElement("span"),
+          _label = document.createElement("span");
+
+      _color.className = "color-label";
+      _color.style.backgroundColor = col;
+      _label.className = "num-label";
+      _label.innerHTML = that.format(breaks[ind]) + " - " + that.format(breaks[ind+1]);
+      li.appendChild(_color);
+      li.appendChild(_label);
+      colorsList.appendChild(li);
+    });
+    description.innerHTML = desc;
+  },
+
+  // [ COMENTAR DESPÚES ]
+  //
+  //
+  updateInfoPanelState : function(name, val){
+    var title = this.panel._container.querySelector("h3"),
+        value = this.panel._container.querySelector("h4");
+    
+    title.innerHTML       = name;
+    value.innerHTML       = this.format(val);
   },
 
   // [ COMENTAR DESPÚES ]
@@ -309,6 +330,9 @@ var appINAI = {
     this.brewColor(data);
     this.updateMap(this.index[0].year);
     this.setYearSelector(years);
+    if(this.panel){
+      this.updateInfoPanel();
+    }
   },
 
   // [ COMENTAR DESPÚES ]
